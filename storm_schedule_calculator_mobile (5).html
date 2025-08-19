@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>STORM Schedule Calculator</title>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 350px;
+        }
+        h2 {
+            color: green;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        input, select {
+            width: 150px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        button {
+            background-color: green;
+            color: white;
+            padding: 10px;
+            border: none;
+            margin-top: 20px;
+            width: 100%;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+<style>
+body {
+    font-size: 2em;
+}
+input, select, button {
+    font-size: 2em;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+</style></head>
+<body>
+<div class="card">
+<h2>STORM Schedule Calculator</h2>
+<label for="area">Working Area (m²):</label>
+<input id="area" max="99999" min="0" type="number"/>
+<label for="speed">Mowing Speed (m/s):</label>
+<select id="speed">
+<option value="">Select</option>
+<option value="0.20">0.20</option>
+<option value="0.25">0.25</option>
+<option value="0.30">0.30</option>
+<option value="0.35">0.35</option>
+<option value="0.40">0.40</option>
+<option value="0.45">0.45</option>
+<option value="0.50">0.50</option>
+<option value="0.55">0.55</option>
+<option value="0.60">0.60</option>
+</select>
+<label for="width">Mowing Width (cm):</label>
+<select id="width">
+<option value="">Select</option>
+<option value="14">14 cm</option>
+<option value="15">15 cm</option>
+<option value="16">16 cm</option>
+<option value="17">17 cm</option>
+<option value="18">18 cm</option>
+<option value="19">19 cm</option>
+<option value="20">20 cm</option>
+<option value="21">21 cm</option>
+<option value="22">22 cm</option>
+<option value="23">23 cm</option>
+<option value="24">24 cm</option>
+<option value="25">25 cm</option>
+<option value="26">26 cm</option>
+<option value="27">27 cm</option>
+<option value="28">28 cm</option>
+</select>
+<label for="mode">Mowing Mode:</label>
+<select id="mode">
+<option value="single">Single Pass</option>
+<option value="cross">Cross Mowing</option>
+</select>
+<label for="model">STORM Model:</label>
+<select id="model">
+<option value="2000">2000m²</option>
+<option value="4000">4000m²</option>
+<option value="6000">6000m²</option>
+</select>
+<button onclick="calculate()">Calculate</button>
+<div class="result" id="result">Schedule Time Required: </div>
+</div>
+<script>
+        const models = {
+            "2000": { areaPerCharge: 450, chargeTime: 180 },
+            "4000": { areaPerCharge: 600, chargeTime: 180 },
+            "6000": { areaPerCharge: 900, chargeTime: 180 }
+        };
+
+        function calculate() {
+            const area = parseInt(document.getElementById("area").value);
+            const speed = parseFloat(document.getElementById("speed").value);
+            const widthCm = parseInt(document.getElementById("width").value);
+            const mode = document.getElementById("mode").value;
+            const model = document.getElementById("model").value;
+
+            if (isNaN(area) || isNaN(speed) || isNaN(widthCm) || !mode || !model) {
+                document.getElementById("result").innerText = "Schedule Time Required: Please fill all fields correctly.";
+                return;
+            }
+
+            const width = widthCm / 100;
+            const effectiveArea = mode === "cross" ? area * 2 : area;
+            const mowingRate = speed * width * 60;
+            const mowingTime = effectiveArea / mowingRate;
+
+            const cycles = Math.ceil(effectiveArea / models[model].areaPerCharge);
+            const chargingTime = cycles * models[model].chargeTime;
+
+            const totalTime = (mowingTime + chargingTime) / 60;
+            document.getElementById("result").innerText = "Schedule Time Required: " + totalTime.toFixed(2) + " hours";
+        }
+    </script>
+</body>
+</html>
